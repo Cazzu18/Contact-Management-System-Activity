@@ -1,37 +1,39 @@
 import tkinter as tk
-from tkinter import *
+from tkinter import messagebox
+from tkinter import ttk
 import sqlite3
 
-#Connect to SQLite database
-conn = sqlite3.connect('contacts.db')
+# Database setup
+conn = sqlite3.connect("contacts.db")
 cursor = conn.cursor()
-
-#Create the Contact table
 cursor.execute('''
 CREATE TABLE IF NOT EXISTS contacts (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-    phone TEXT NOT NULL,
-    email TEXT NOT NULL
-
+   id INTEGER PRIMARY KEY AUTOINCREMENT,
+   name TEXT NOT NULL,
+   phone TEXT NOT NULL,
+   email TEXT NOT NULL
 )
 ''')
 conn.commit()
 
+# Main Application Class
 class ContactApp:
     def __init__(self, root):
         self.root = root
-        self.root.title("Contact Management System Activity")
+        self.root.title("Contact Management System")
 
+        # Input Fields
         self.name_var = tk.StringVar()
         self.phone_var = tk.StringVar()
         self.email_var = tk.StringVar()
 
+        # GUI Setup
         self.setup_ui()
 
     def setup_ui(self):
+        # Contact Form
         frame = tk.Frame(self.root)
-        frame.pack(pday=20)
+        frame.pack(pady=20)
 
         tk.Label(frame, text="Name").grid(row=0, column=0, padx=10, pady=5)
         tk.Entry(frame, textvariable=self.name_var).grid(row=0, column=1, padx=10, pady=5)
@@ -42,20 +44,23 @@ class ContactApp:
         tk.Label(frame, text="Email").grid(row=2, column=0, padx=10, pady=5)
         tk.Entry(frame, textvariable=self.email_var).grid(row=2, column=1, padx=10, pady=5)
 
+        # Buttons
         tk.Button(frame, text="Add Contact", command=self.add_contact).grid(row=3, column=0, columnspan=2, pady=10)
 
+        # Contact List
         self.contact_list = ttk.Treeview(self.root, columns=("name", "phone", "email"), show="headings")
         self.contact_list.heading("name", text="Name")
         self.contact_list.heading("phone", text="Phone")
         self.contact_list.heading("email", text="Email")
         self.contact_list.pack(pady=20)
 
-
         self.contact_list.bind("<Double-1>", self.load_contact)
 
+        # Update/Delete Buttons
         tk.Button(self.root, text="Update Contact", command=self.update_contact).pack(pady=5)
         tk.Button(self.root, text="Delete Contact", command=self.delete_contact).pack(pady=5)
 
+        # Load contacts
         self.load_contacts()
 
     def add_contact(self):
@@ -145,11 +150,4 @@ if __name__ == "__main__":
     root = tk.Tk()
     app = ContactApp(root)
     root.mainloop()
-
-
-
-
-
-
-
 
